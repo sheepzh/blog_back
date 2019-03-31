@@ -4,18 +4,19 @@ import com.alibaba.fastjson.JSON;
 import zhy.blog.dao.IPoemDao;
 import zhy.blog.entity.Poem;
 import zhy.blog.util.Page;
-import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
 import zhy.util.leveldb.query.ConditionFilter;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PoemDao extends BaseDao<Poem> implements IPoemDao {
 
-    public PoemDao() {
-        super.helper = new LevelDbHelper("poem");
+    @Override
+    @NotNull String dbName() {
+        return "poem";
     }
 
     @Override

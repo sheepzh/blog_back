@@ -2,11 +2,13 @@ package zhy.blog.dao.leveldb;
 
 import zhy.blog.dao.IStateDao;
 import zhy.blog.entity.State;
-import zhy.util.leveldb.client.LevelDbHelper;
+
+import javax.validation.constraints.NotNull;
 
 public class StateDao extends BaseDao<State> implements IStateDao {
-    public StateDao() {
-        helper = new LevelDbHelper("state");
+    @Override
+    @NotNull String dbName() {
+        return "state";
     }
 
     @Override
@@ -16,6 +18,6 @@ public class StateDao extends BaseDao<State> implements IStateDao {
 
     @Override
     public void put(String key, String value) {
-         helper.putOrAdd(key,value);
+        helper.putOrAdd(key, value);
     }
 }

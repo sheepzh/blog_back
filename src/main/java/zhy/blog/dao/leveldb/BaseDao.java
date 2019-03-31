@@ -8,12 +8,25 @@ import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
 import zhy.util.leveldb.query.ConditionFilter;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
 abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializable {
     LevelDbHelper helper;
 
+    public BaseDao() {
+        helper = new LevelDbHelper(dbName());
+    }
+
+    /**
+     * Name of database
+     *
+     * @return name
+     */
+    abstract @NotNull String dbName();
+
+    @Override
     public int insertNormal(T toInsert) {
         Date now = new Date();
         toInsert.normal()
@@ -22,6 +35,7 @@ abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializab
         return insert(toInsert);
     }
 
+    @Override
     public int insertInitialized(T toInsert) {
         Date now = new Date();
         toInsert.initialized()

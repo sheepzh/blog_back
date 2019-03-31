@@ -3,17 +3,20 @@ package zhy.blog.dao.leveldb;
 import com.alibaba.fastjson.JSON;
 import zhy.blog.dao.IGroupDao;
 import zhy.blog.entity.GroupNode;
-import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
 import zhy.util.leveldb.query.ConditionFilter;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GroupDao extends BaseDao<GroupNode> implements IGroupDao {
-    public GroupDao() {
-        super.helper = new LevelDbHelper("group_node");
+
+    @NotNull
+    @Override
+    String dbName() {
+        return "group_node";
     }
 
     @Override
