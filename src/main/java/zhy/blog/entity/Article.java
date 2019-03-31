@@ -1,5 +1,6 @@
 package zhy.blog.entity;
 
+import zhy.blog.util.BlogException;
 import zhy.blog.util.StringUtil;
 
 public class Article extends BaseEntity {
@@ -43,7 +44,8 @@ public class Article extends BaseEntity {
     }
 
     @Override
-    public boolean isValid() {
-        return StringUtil.nonBlank(title, content);
+    public void assertValid() {
+        if (StringUtil.existsBlank(title, content))
+            throw new BlogException("Invalid article");
     }
 }

@@ -12,6 +12,7 @@ import zhy.blog.entity.Article;
 import zhy.blog.entity.Comment;
 import zhy.blog.entity.GroupNode;
 import zhy.blog.entity.GroupTreeNode;
+import zhy.blog.util.BlogException;
 import zhy.blog.util.Page;
 import zhy.blog.util.Response;
 import zhy.blog.util.Status;
@@ -28,7 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-public class ArticleController {
+public class ArticleController extends BaseController {
 
     private final IArticleDao articleDao;
     private final IGroupDao groupDao;
@@ -46,21 +47,18 @@ public class ArticleController {
     /**
      * Get the article list by page
      *
-     * @param groupId      group id
-     * @param pageNum      number of page
-     * @param pagePer      number of article per page
-     * @param includeChild whether include articles in child groups.
+     * @param groupId group id
+     * @param pageNum number of page
+     * @param pagePer number of article per page
      * @return response
      */
     @RequestMapping(value = "article", method = GET)
     public Response find(@RequestParam("g") int groupId,
-                         @RequestParam(value = "s", defaultValue = "false") boolean includeChild,
                          @RequestParam(value = "pn", defaultValue = "1") int pageNum,
                          @RequestParam(value = "pp", defaultValue = "10") int pagePer) {
-        Response response = new Response();
-        List<GroupNode> nodes = groupDao.find(null);
-        nodes = GroupTreeNode.allChildren(nodes, groupId);
-        try {
+        return exceptionWrap(() -> {
+            List<GroupNode> nodes = groupDao.find(null);
+            nodes = GroupTreeNode.allChildren(nodes, groupId);
             List<Article> result = new ArrayList<>();
             for (GroupNode node : nodes) {
                 Article cond = new Article().setGroupId(node.getId());
@@ -70,13 +68,9 @@ public class ArticleController {
             }
             int start = (pageNum - 1) * pagePer;
             int end = Math.min(result.size(), pageNum * pagePer);
-            result = end > start ? result.subList(start, end) : Collections.emptyList();
-            response.setData(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+            return end > start ? result.subList(start, end) : Collections.emptyList();
+
+        });
     }
 
     /**
@@ -87,18 +81,14 @@ public class ArticleController {
      */
     @RequestMapping(value = "article", method = POST)
     public Response add(Article article) {
-        Response response = new Response();
-        try {
-            if (!article.isValid()) return response.fail("Invalid article");
+        return exceptionWrap(u -> {
+            article.assertValid();
             Date current = new Date();
             article.setCreateDate(current);
             article.setUpdateDate(current);
             article.setStatus(Status.INITIALIZED);
             articleDao.insert(article);
-        } catch (Exception e) {
-            response.internalError();
-        }
-        return response;
+        });
     }
 
     /**
@@ -109,15 +99,7 @@ public class ArticleController {
      */
     @RequestMapping(value = "article/{id}", method = GET)
     public Response get(@PathVariable("id") int id) {
-        Response response = new Response();
-        try {
-            Article article = articleDao.get(id);
-            response = article == null ? response.notFound() : response.setData(article);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+        return exceptionWrap(() -> articleDao.get(id));
     }
 
     /**
@@ -128,17 +110,12 @@ public class ArticleController {
      */
     @RequestMapping(value = "article/{id}", method = DELETE)
     public Response delete(@PathVariable("id") int id) {
-        Response response = new Response();
-        try {
+        return exceptionWrap(u -> {
             Article article = articleDao.get(id);
-            if (article == null) return response.notFound();
+            if (article == null) return;
             article.setStatus(Status.OLD);
             articleDao.update(article);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+        });
     }
 
     /**
@@ -149,31 +126,21 @@ public class ArticleController {
      */
     @RequestMapping(value = "article", method = PATCH)
     public Response update(Article article) {
-        Response response = new Response();
-        try {
-            if (article.getId() == null) return response.notFound();
-            if (!article.isValid()) return response.fail("Invalid article");
+        return exceptionWrap(u -> {
+            if (article.getId() == null) throw new BlogException("Primary key missed");
+            article.assertValid();
             articleDao.update(article);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+        });
     }
 
     @RequestMapping(value = "/article/{id}/comment", method = GET)
     public Response commentList(@PathVariable("id") int targetId) {
-        Response response = new Response();
-        try {
+        return exceptionWrap(() -> {
             Comment cond = new Comment().setTargetId(targetId).setTargetType(Comment.ARTICLE);
             List<Comment> result = commentDao.findAll(cond);
             result.sort(Comparator.comparing(Comment::getId).reversed());
-            response.success().setData(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+            return result;
+        });
     }
 
     @RequestMapping(value = "/article/{id}/comment", method = POST)
@@ -182,23 +149,16 @@ public class ArticleController {
                                   @RequestParam String email,
                                   @PathVariable("id") Integer targetId,
                                   @RequestParam(defaultValue = "") String url) {
-        Response response = new Response();
-        Comment comment = new Comment()
-                .setContent(content)
-                .setUser(user)
-                .setTargetId(targetId)
-                .setTargetType(Comment.ARTICLE)
-                .setEmail(email)
-                .setTargetUrl(url);
-        try {
-            if (!comment.isValid()) return response.fail("Invalid comment");
-            Integer id = commentDao.insertNormal(comment);
-            response.success().setData(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
-
+        return exceptionWrap(() -> {
+            Comment comment = new Comment()
+                    .setContent(content)
+                    .setUser(user)
+                    .setTargetId(targetId)
+                    .setTargetType(Comment.ARTICLE)
+                    .setEmail(email)
+                    .setTargetUrl(url);
+            comment.assertValid();
+            return commentDao.insertNormal(comment);
+        });
     }
 }

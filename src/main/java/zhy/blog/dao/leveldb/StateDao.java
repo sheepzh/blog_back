@@ -5,6 +5,9 @@ import zhy.blog.entity.State;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Save base item code,such as password of administrator
+ */
 public class StateDao extends BaseDao<State> implements IStateDao {
     @Override
     @NotNull String dbName() {

@@ -1,5 +1,6 @@
 package zhy.blog.entity;
 
+import zhy.blog.util.BlogException;
 import zhy.blog.util.ObjectUtil;
 import zhy.blog.util.StringUtil;
 
@@ -94,7 +95,8 @@ public class Comment extends BaseEntity {
     }
 
     @Override
-    public boolean isValid() {
-        return StringUtil.nonBlank(user, content) && ObjectUtil.nonNull(targetId);
+    public void assertValid() {
+        if (StringUtil.existsBlank(user, content) || ObjectUtil.existsNull(targetId))
+            throw new BlogException("Invalid Comment");
     }
 }

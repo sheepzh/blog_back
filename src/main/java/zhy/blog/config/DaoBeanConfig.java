@@ -4,11 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import zhy.blog.dao.IArticleDao;
 import zhy.blog.dao.ICommentDao;
+import zhy.blog.dao.IFriendLinkDao;
 import zhy.blog.dao.IGroupDao;
 import zhy.blog.dao.IPoemDao;
 import zhy.blog.dao.IStateDao;
 import zhy.blog.dao.leveldb.ArticleDao;
 import zhy.blog.dao.leveldb.CommentDao;
+import zhy.blog.dao.leveldb.FriendLinkDao;
 import zhy.blog.dao.leveldb.GroupDao;
 import zhy.blog.dao.leveldb.PoemDao;
 import zhy.blog.dao.leveldb.StateDao;
@@ -36,7 +38,12 @@ public class DaoBeanConfig {
     }
 
     @Bean("stateDao")
-    public IStateDao initStateDao(){
+    public IStateDao initStateDao() {
         return new StateDao();
+    }
+
+    @Bean("friendLinkDao")
+    public IFriendLinkDao initFriendLinkDao() {
+        return new FriendLinkDao();
     }
 }

@@ -12,11 +12,11 @@ public class StringUtil {
         return s == null || s.trim().isEmpty();
     }
 
-    public static boolean nonBlank(String... s) {
+    public static boolean existsBlank(String... s) {
         for (String s1 : s) {
-            if (isBlank(s1)) return false;
+            if (isBlank(s1)) return true;
         }
-        return true;
+        return false;
     }
 
     public static String sameChars(char c, int n) {

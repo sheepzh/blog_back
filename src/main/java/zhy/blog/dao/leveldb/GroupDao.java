@@ -20,11 +20,6 @@ public class GroupDao extends BaseDao<GroupNode> implements IGroupDao {
     }
 
     @Override
-    public GroupNode get(int id) {
-        return JSON.parseObject(helper.get(String.valueOf(id)), GroupNode.class);
-    }
-
-    @Override
     public List<GroupNode> find(GroupNode node) {
         List<Condition> conditions = ConditionFilter.generateCondition(node);
         Map<String, String> map = helper.find(conditions, -1, -1);

@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import zhy.blog.dao.ICommentDao;
 import zhy.blog.dao.IPoemDao;
 import zhy.blog.entity.Comment;
-import zhy.blog.entity.Poem;
-import zhy.blog.util.Response;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,7 +16,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-public class PoemController {
+public class PoemController extends BaseController {
     private IPoemDao poemDao;
     private final ICommentDao commentDao;
 
@@ -30,44 +28,22 @@ public class PoemController {
 
     @RequestMapping(value = "/poem", method = GET)
     public Object list() {
-        Response response = new Response();
-        try {
-            int totalPage = poemDao.count(null);
-            List<Poem> poems = poemDao.find(null, null);
-            response.success().setData(poems);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+        return exceptionWrap(() -> poemDao.find(null));
     }
 
     @RequestMapping(value = "/poem/{id}", method = GET)
     public Object get(@PathVariable int id) {
-        Response response = new Response();
-        try {
-            Poem poem = poemDao.get(id);
-            response.success().setData(poem);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+        return exceptionWrap(() -> poemDao.get(id));
     }
 
     @RequestMapping(value = "/poem/{id}/comment", method = GET)
     public Object getComments(@PathVariable int id) {
-        Response response = new Response();
-        try {
+        return exceptionWrap(() -> {
             Comment cond = new Comment().setTargetId(id).setTargetType(Comment.POEM);
             List<Comment> result = commentDao.findAll(cond);
             result.sort(Comparator.comparing(Comment::getId).reversed());
-            response.success().setData(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
+            return result;
+        });
     }
 
     @RequestMapping(value = "/poem/{id}/comment", method = POST)
@@ -76,23 +52,16 @@ public class PoemController {
                               @RequestParam(value = "email", defaultValue = "") String email,
                               @PathVariable("id") Integer targetId,
                               @RequestParam(defaultValue = "") String url) {
-        Response response = new Response();
-        Comment comment = new Comment()
-                .setContent(content)
-                .setUser(user)
-                .setTargetId(targetId)
-                .setTargetType(Comment.POEM)
-                .setEmail(email)
-                .setTargetUrl(url);
-        try {
-            if (!comment.isValid()) return response.fail("Invalid comment");
-            Integer id = commentDao.insertNormal(comment);
-            response.success().setData(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.internalError();
-        }
-        return response;
-
+        return exceptionWrap(() -> {
+            Comment comment = new Comment()
+                    .setContent(content)
+                    .setUser(user)
+                    .setTargetId(targetId)
+                    .setTargetType(Comment.POEM)
+                    .setEmail(email)
+                    .setTargetUrl(url);
+            comment.assertValid();
+            return commentDao.insertNormal(comment);
+        });
     }
 }

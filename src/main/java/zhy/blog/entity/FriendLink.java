@@ -1,5 +1,6 @@
 package zhy.blog.entity;
 
+import zhy.blog.util.BlogException;
 import zhy.blog.util.StringUtil;
 
 /**
@@ -61,7 +62,8 @@ public class FriendLink extends BaseEntity {
     }
 
     @Override
-    public boolean isValid() {
-        return StringUtil.nonBlank(friendName, url);
+    public void assertValid() {
+        if (StringUtil.existsBlank(friendName, url))
+            throw new BlogException("Invalid FriendLink");
     }
 }

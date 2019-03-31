@@ -1,8 +1,10 @@
 package zhy.blog.dao.leveldb;
 
+import com.alibaba.fastjson.JSON;
 import zhy.blog.dao.IUcrdDao;
 import zhy.blog.dao.Initializable;
 import zhy.blog.entity.BaseEntity;
+import zhy.blog.util.Page;
 import zhy.blog.util.Status;
 import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
@@ -10,14 +12,19 @@ import zhy.util.leveldb.query.ConditionFilter;
 import zhy.util.leveldb.query.Operation;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.ParameterizedType;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializable {
+    private Class<T> tClass;
     LevelDbHelper helper;
 
-    public BaseDao() {
+    BaseDao() {
         helper = new LevelDbHelper(dbName());
+        tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     /**
@@ -80,7 +87,31 @@ abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializab
     }
 
     @Override
-    final public void init() {
+    public T get(int id) {
+        return JSON.parseObject(helper.get(String.valueOf(id)), tClass);
+    }
+
+    @Override
+    public List<T> find(T t) {
+        return find(t, null);
+    }
+
+    @Override
+    public List<T> find(T t, Page page) {
+        int start = page == null ? -1 : page.getStartNum();
+        int end = page == null ? -1 : page.getEndNum();
+        List<Condition> conditions = ConditionFilter.generateCondition(t);
+        conditions.add(new Condition("status", String.valueOf(Status.INVALID), Operation.NOT_EQUAL));
+        conditions.add(new Condition("status", String.valueOf(Status.OLD), Operation.NOT_EQUAL));
+        Map<String, String> map = helper.find(conditions, start, end);
+        return map.values()
+                .parallelStream()
+                .map(a -> JSON.parseObject(a, tClass))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public final void init() {
         helper.deleteAndInit();
     }
 }

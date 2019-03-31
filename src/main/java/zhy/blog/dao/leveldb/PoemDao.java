@@ -20,11 +20,6 @@ public class PoemDao extends BaseDao<Poem> implements IPoemDao {
     }
 
     @Override
-    public Poem get(int id) {
-        return JSON.parseObject(helper.get(String.valueOf(id)), Poem.class);
-    }
-
-    @Override
     public List<Poem> find(Poem poem, Page page) {
         int start = page == null ? -1 : page.getStartNum();
         int end = page == null ? -1 : page.getEndNum();

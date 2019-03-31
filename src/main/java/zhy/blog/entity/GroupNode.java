@@ -1,5 +1,6 @@
 package zhy.blog.entity;
 
+import zhy.blog.util.BlogException;
 import zhy.blog.util.ObjectUtil;
 
 /**
@@ -49,7 +50,8 @@ public class GroupNode extends BaseEntity {
     }
 
     @Override
-    public boolean isValid() {
-        return ObjectUtil.nonNull(name, level);
+    public void assertValid() {
+        if (ObjectUtil.existsNull(name, level))
+            throw new BlogException("Invalid GroupNode");
     }
 }

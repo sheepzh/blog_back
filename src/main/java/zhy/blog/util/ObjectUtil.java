@@ -6,10 +6,10 @@ package zhy.blog.util;
  * @author zhy
  */
 public class ObjectUtil {
-    public static boolean nonNull(Object... objects) {
+    public static boolean existsNull(Object... objects) {
         for (Object object : objects) {
-            if (object == null) return false;
+            if (object == null) return true;
         }
-        return true;
+        return false;
     }
 }
