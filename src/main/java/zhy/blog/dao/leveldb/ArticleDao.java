@@ -5,18 +5,19 @@ import zhy.blog.dao.IArticleDao;
 import zhy.blog.entity.Article;
 import zhy.blog.util.Page;
 import zhy.blog.util.Status;
-import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
 import zhy.util.leveldb.query.ConditionFilter;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ArticleDao extends BaseDao<Article> implements IArticleDao {
 
-    public ArticleDao() {
-        super.helper = new LevelDbHelper("article");
+    @Override
+    @NotNull String dbName() {
+        return "article";
     }
 
     @Override

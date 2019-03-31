@@ -3,18 +3,21 @@ package zhy.blog.dao.leveldb;
 import com.alibaba.fastjson.JSON;
 import zhy.blog.dao.ICommentDao;
 import zhy.blog.entity.Comment;
-import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
 import zhy.util.leveldb.query.ConditionFilter;
 
+import javax.validation.constraints.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CommentDao extends BaseDao<Comment> implements ICommentDao {
-    public CommentDao() {
-        super.helper = new LevelDbHelper("comment");
+
+    @NotNull
+    @Override
+    String dbName() {
+        return "comment";
     }
 
     @Override
