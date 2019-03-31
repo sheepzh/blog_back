@@ -1,5 +1,10 @@
 package zhy.blog.util;
 
+/**
+ * String tools
+ *
+ * @author zhy
+ */
 public class StringUtil {
     public static final String EMPTY = "";
 

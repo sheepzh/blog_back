@@ -1,5 +1,11 @@
 package zhy.blog.util;
 
+/**
+ * Configuration of levelDB
+ * Disabled temporarily
+ *
+ * @author zhy
+ */
 public class LevelDbConfig {
     private String dbRoot;
     private String charset;

@@ -7,9 +7,9 @@ package zhy.blog.util;
  * @since 20190307
  */
 public class Page {
-    private int total = 0;
-    private int currentPage = 1;
-    private int numberPerPage = 10;
+    private int total;
+    private int currentPage;
+    private int numberPerPage;
 
     public Page() {
         this(0, 10, 1);

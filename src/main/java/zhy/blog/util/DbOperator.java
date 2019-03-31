@@ -1,21 +1,18 @@
 package zhy.blog.util;
 
-import zhy.blog.dao.leveldb.ArticleDao;
-import zhy.blog.dao.leveldb.CommentDao;
-import zhy.blog.dao.leveldb.GroupDao;
-import zhy.blog.dao.leveldb.PoemDao;
-import zhy.blog.dao.leveldb.StateDao;
-import zhy.blog.entity.Article;
-import zhy.blog.entity.BaseEntity;
-import zhy.blog.entity.Comment;
-import zhy.blog.entity.GroupNode;
-import zhy.blog.entity.Poem;
+import zhy.blog.dao.leveldb.*;
+import zhy.blog.entity.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Operator of database
+ *
+ * @author zhy
+ */
 public class DbOperator {
     private static GroupDao groupDao = new GroupDao();
     private static ArticleDao articleDao = new ArticleDao();
@@ -28,7 +25,7 @@ public class DbOperator {
         Poem poem = new Poem();
         for (int i = 0; i < 100; i++) {
             int tn = (int) (Math.random() * 10);
-            poem.setTitle(StringUtil.sameChars('X', tn+3) );
+            poem.setTitle(StringUtil.sameChars('X', tn + 3));
             tn = (int) (Math.random() * 30) + 4;
             poem.setContent(IntStream.range(0, tn).mapToObj((int c) -> "\n" + StringUtil.sameChars('x', (int) (Math.random() * 10 + 8))).collect(Collectors.joining()).substring(1));
             poemDao.insertInitialized(poem);

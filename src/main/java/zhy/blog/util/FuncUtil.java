@@ -2,8 +2,6 @@ package zhy.blog.util;
 
 import zhy.blog.entity.BaseEntity;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
