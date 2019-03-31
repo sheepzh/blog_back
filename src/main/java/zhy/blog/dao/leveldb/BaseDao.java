@@ -7,6 +7,7 @@ import zhy.blog.util.Status;
 import zhy.util.leveldb.client.LevelDbHelper;
 import zhy.util.leveldb.query.Condition;
 import zhy.util.leveldb.query.ConditionFilter;
+import zhy.util.leveldb.query.Operation;
 
 import java.util.Date;
 import java.util.List;
@@ -59,8 +60,8 @@ abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializab
     @Override
     public int count(T article) {
         List<Condition> conditions = ConditionFilter.generateCondition(article);
-        conditions.add(new Condition("status", String.valueOf(Status.INVALID), Condition.NOT_EQUAL));
-        conditions.add(new Condition("status", String.valueOf(Status.OLD), Condition.NOT_EQUAL));
+        conditions.add(new Condition("status", String.valueOf(Status.INVALID), Operation.NOT_EQUAL));
+        conditions.add(new Condition("status", String.valueOf(Status.OLD), Operation.NOT_CONTAIN));
         return helper.find(conditions, -1, -1).size();
     }
 
