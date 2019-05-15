@@ -8,11 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 import zhy.blog.dao.ICommentDao;
 import zhy.blog.dao.IPoemDao;
 import zhy.blog.entity.Comment;
+import zhy.blog.entity.Poem;
+import zhy.blog.util.Status;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -62,6 +67,36 @@ public class PoemController extends BaseController {
                     .setTargetUrl(url);
             comment.assertValid();
             return commentDao.insertNormal(comment);
+        });
+    }
+
+    @RequestMapping(value = "/poem", method = POST)
+    public Object addPoem(@RequestParam String title,
+                          @RequestParam String content) {
+        return exceptionWrap(u -> {
+            Poem poem = (Poem) new Poem()
+                    .setTitle(title)
+                    .setContent(content)
+                    .assertValid()
+                    .setCreateDate(new Date())
+                    .setUpdateDate(new Date())
+                    .setStatus(Status.INITIALIZED);
+            poemDao.insertInitialized(poem);
+        });
+    }
+
+    @RequestMapping(value = "/poem/{id}", method = PATCH)
+    public Object updatePoem(@PathVariable int id,
+                             @RequestParam String title,
+                             @RequestParam String content) {
+        return exceptionWrap(u -> {
+            Poem poem = poemDao.get(id);
+            Objects.requireNonNull(poem)
+                    .setTitle(title)
+                    .setContent(content)
+                    .assertValid()
+                    .setUpdateDate(new Date());
+            poemDao.update(poem);
         });
     }
 }

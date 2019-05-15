@@ -12,7 +12,6 @@ import zhy.blog.entity.Article;
 import zhy.blog.entity.Comment;
 import zhy.blog.entity.GroupNode;
 import zhy.blog.entity.GroupTreeNode;
-import zhy.blog.util.BlogException;
 import zhy.blog.util.Page;
 import zhy.blog.util.Response;
 import zhy.blog.util.Status;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -34,7 +34,6 @@ public class ArticleController extends BaseController {
     private final IArticleDao articleDao;
     private final IGroupDao groupDao;
     private final ICommentDao commentDao;
-
 
     @Autowired
     public ArticleController(IArticleDao articleDao, IGroupDao groupDao, ICommentDao commentDao) {
@@ -76,18 +75,42 @@ public class ArticleController extends BaseController {
     /**
      * To add an article
      *
-     * @param article to add
      * @return response
      */
     @RequestMapping(value = "article", method = POST)
-    public Response add(Article article) {
+    public Response add(@RequestParam String title,
+                        @RequestParam String content,
+                        @RequestParam Integer group) {
         return exceptionWrap(u -> {
+            Article article = new Article().setContent(content).setTitle(title).setGroupId(group);
             article.assertValid();
             Date current = new Date();
             article.setCreateDate(current);
             article.setUpdateDate(current);
             article.setStatus(Status.INITIALIZED);
             articleDao.insert(article);
+        });
+    }
+
+    /**
+     * Update the article
+     *
+     * @return response
+     */
+    @RequestMapping(value = "article/{id}", method = PATCH)
+    public Response update(@PathVariable int id,
+                           @RequestParam String title,
+                           @RequestParam String content,
+                           @RequestParam Integer group) {
+        return exceptionWrap(u -> {
+            Article article = articleDao.get(id);
+            Objects.requireNonNull(article);
+            article.setTitle(title)
+                    .setContent(content)
+                    .setGroupId(group)
+                    .setUpdateDate(new Date());
+            article.assertValid();
+            articleDao.update(article);
         });
     }
 
@@ -114,21 +137,6 @@ public class ArticleController extends BaseController {
             Article article = articleDao.get(id);
             if (article == null) return;
             article.setStatus(Status.OLD);
-            articleDao.update(article);
-        });
-    }
-
-    /**
-     * Update
-     *
-     * @param article to update
-     * @return response
-     */
-    @RequestMapping(value = "article", method = PATCH)
-    public Response update(Article article) {
-        return exceptionWrap(u -> {
-            if (article.getId() == null) throw new BlogException("Primary key missed");
-            article.assertValid();
             articleDao.update(article);
         });
     }

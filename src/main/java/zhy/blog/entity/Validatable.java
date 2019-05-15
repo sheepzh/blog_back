@@ -1,5 +1,5 @@
 package zhy.blog.entity;
 
-public interface Validatable {
-    void assertValid();
+public interface Validatable<T> {
+    T assertValid();
 }

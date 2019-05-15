@@ -23,6 +23,7 @@ public class State extends BaseEntity {
     }
 
     @Override
-    public void assertValid() {
+    public BaseEntity assertValid() {
+        return this;
     }
 }

@@ -1,12 +1,19 @@
 package zhy.blog.util;
 
-import zhy.blog.dao.leveldb.*;
-import zhy.blog.entity.*;
+import zhy.blog.dao.leveldb.ArticleDao;
+import zhy.blog.dao.leveldb.CommentDao;
+import zhy.blog.dao.leveldb.FriendLinkDao;
+import zhy.blog.dao.leveldb.GroupDao;
+import zhy.blog.dao.leveldb.PoemDao;
+import zhy.blog.dao.leveldb.StateDao;
+import zhy.blog.entity.Article;
+import zhy.blog.entity.BaseEntity;
+import zhy.blog.entity.Comment;
+import zhy.blog.entity.GroupNode;
+import zhy.blog.entity.Poem;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Operator of database
@@ -19,17 +26,16 @@ public class DbOperator {
     private static CommentDao commentDao = new CommentDao();
     private static PoemDao poemDao = new PoemDao();
     private static StateDao stateDao = new StateDao();
+    private static FriendLinkDao friendLinkDao = new FriendLinkDao();
 
     public static void main(String[] a) {
-        poemDao.init();
-        Poem poem = new Poem();
-        for (int i = 0; i < 100; i++) {
-            int tn = (int) (Math.random() * 10);
-            poem.setTitle(StringUtil.sameChars('X', tn + 3));
-            tn = (int) (Math.random() * 30) + 4;
-            poem.setContent(IntStream.range(0, tn).mapToObj((int c) -> "\n" + StringUtil.sameChars('x', (int) (Math.random() * 10 + 8))).collect(Collectors.joining()).substring(1));
-            poemDao.insertInitialized(poem);
-        }
+//        Article article = new Article().setGroupId(1).setTitle("测试").setContent("测试内容\n\n测试内容");
+//        articleDao.insertInitialized(article);
+//
+//        GroupNode node = new GroupNode().setLevel(1).setName("1").setTags(new String[]{});
+//        groupDao.insertNormal(node);
+        Poem poem = new Poem().setTitle("测试").setContent("1\n\n2\n3\n555");
+        poemDao.insertInitialized(poem);
     }
 
     private static void printGroup() {

@@ -50,8 +50,9 @@ public class GroupNode extends BaseEntity {
     }
 
     @Override
-    public void assertValid() {
+    public BaseEntity assertValid() {
         if (ObjectUtil.existsNull(name, level))
             throw new BlogException("Invalid GroupNode");
+        return this;
     }
 }

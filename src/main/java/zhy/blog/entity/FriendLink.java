@@ -10,10 +10,11 @@ import zhy.blog.util.StringUtil;
  */
 public class FriendLink extends BaseEntity {
     private String url;
-    private String friendName;
+    private String name;
     private String webName;
-    private String friendInfo;
-    private String friendTag;
+    private String info;
+    private String tag;
+    private String location;
 
 
     public String getUrl() {
@@ -25,12 +26,12 @@ public class FriendLink extends BaseEntity {
         return this;
     }
 
-    public String getFriendName() {
-        return friendName;
+    public String getName() {
+        return name;
     }
 
-    public FriendLink setFriendName(String friendName) {
-        this.friendName = friendName;
+    public FriendLink setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -43,27 +44,28 @@ public class FriendLink extends BaseEntity {
         return this;
     }
 
-    public String getFriendInfo() {
-        return friendInfo;
+    public String getInfo() {
+        return info;
     }
 
-    public FriendLink setFriendInfo(String friendInfo) {
-        this.friendInfo = friendInfo;
+    public FriendLink setInfo(String info) {
+        this.info = info;
         return this;
     }
 
-    public String getFriendTag() {
-        return friendTag;
+    public String getTag() {
+        return tag;
     }
 
-    public FriendLink setFriendTag(String friendTag) {
-        this.friendTag = friendTag;
+    public FriendLink setTag(String tag) {
+        this.tag = tag;
         return this;
     }
 
     @Override
-    public void assertValid() {
-        if (StringUtil.existsBlank(friendName, url))
+    public BaseEntity assertValid() {
+        if (StringUtil.existsBlank(name, url))
             throw new BlogException("Invalid FriendLink");
+        return this;
     }
 }

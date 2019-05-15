@@ -44,8 +44,9 @@ public class Poem extends BaseEntity {
     }
 
     @Override
-    public void assertValid() {
+    public BaseEntity assertValid() {
         if (StringUtil.existsBlank(title, content))
             throw new BlogException("Invalid poem");
+        return this;
     }
 }

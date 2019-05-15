@@ -44,8 +44,9 @@ public class Article extends BaseEntity {
     }
 
     @Override
-    public void assertValid() {
+    public BaseEntity assertValid() {
         if (StringUtil.existsBlank(title, content))
             throw new BlogException("Invalid article");
+        return this;
     }
 }

@@ -95,8 +95,9 @@ public class Comment extends BaseEntity {
     }
 
     @Override
-    public void assertValid() {
+    public BaseEntity assertValid() {
         if (StringUtil.existsBlank(user, content) || ObjectUtil.existsNull(targetId))
             throw new BlogException("Invalid Comment");
+        return this;
     }
 }

@@ -11,7 +11,7 @@ import java.util.Date;
  * @author zhyyy
  * @since 20190307
  */
-public abstract class BaseEntity implements Validatable {
+public abstract class BaseEntity implements Validatable<BaseEntity> {
 
     /**
      * ID of this article
