@@ -10,14 +10,9 @@ import zhy.blog.dao.ICommentDao;
 import zhy.blog.dao.IGroupDao;
 import zhy.blog.entity.Article;
 import zhy.blog.entity.Comment;
-import zhy.blog.entity.GroupNode;
-import zhy.blog.entity.GroupTreeNode;
-import zhy.blog.util.Page;
 import zhy.blog.util.Response;
 import zhy.blog.util.Status;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -56,19 +51,19 @@ public class ArticleController extends BaseController {
                          @RequestParam(value = "pn", defaultValue = "1") int pageNum,
                          @RequestParam(value = "pp", defaultValue = "10") int pagePer) {
         return exceptionWrap(() -> {
-            List<GroupNode> nodes = groupDao.find(null);
-            nodes = GroupTreeNode.allChildren(nodes, groupId);
-            List<Article> result = new ArrayList<>();
-            for (GroupNode node : nodes) {
-                Article cond = new Article().setGroupId(node.getId());
-                int total = articleDao.count(cond);
-                Page page = new Page(total, pagePer, pageNum);
-                result.addAll(articleDao.find(cond, page));
-            }
-            int start = (pageNum - 1) * pagePer;
-            int end = Math.min(result.size(), pageNum * pagePer);
-            return end > start ? result.subList(start, end) : Collections.emptyList();
-
+//            List<GroupNode> nodes = groupDao.find(null);
+//            nodes = GroupTreeNode.allChildren(nodes, groupId);
+//            List<Article> result = new ArrayList<>();
+//            for (GroupNode node : nodes) {
+//                Article cond = new Article().setGroupId(node.getId());
+//                int total = articleDao.count(cond);
+//                Page page = new Page(total, pagePer, pageNum);
+//                result.addAll(articleDao.find(cond, page));
+//            }
+//            int start = (pageNum - 1) * pagePer;
+//            int end = Math.min(result.size(), pageNum * pagePer);
+//            return end > start ? result.subList(start, end) : Collections.emptyList();
+            return articleDao.find(null);
         });
     }
 
