@@ -13,6 +13,7 @@ import zhy.util.leveldb.query.Operation;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.ParameterizedType;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,7 @@ abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializab
         return map.values()
                 .parallelStream()
                 .map(a -> JSON.parseObject(a, tClass))
+                .sorted(Comparator.comparingInt(BaseEntity::getId).reversed())
                 .collect(Collectors.toList());
     }
 
