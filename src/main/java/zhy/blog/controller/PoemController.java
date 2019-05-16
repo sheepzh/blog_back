@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -33,7 +34,11 @@ public class PoemController extends BaseController {
 
     @RequestMapping(value = "/poem", method = GET)
     public Object list() {
-        return exceptionWrap(() -> poemDao.find(null));
+        return exceptionWrap(() -> {
+            List<Poem> poems = poemDao.find(null);
+            poems.removeIf(Objects::isNull);
+            return poems;
+        });
     }
 
     @RequestMapping(value = "/poem/{id}", method = GET)
@@ -98,5 +103,10 @@ public class PoemController extends BaseController {
                     .setUpdateDate(new Date());
             poemDao.update(poem);
         });
+    }
+
+    @RequestMapping(value = "/poem/{id}", method = DELETE)
+    public Object delete(@PathVariable int id) {
+        return exceptionWrap(() -> poemDao.delete(id));
     }
 }
