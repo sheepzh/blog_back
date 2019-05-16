@@ -75,7 +75,7 @@ public class FriendLinkController extends BaseController {
                     .setWebName(webName)
                     .setInfo(info)
                     .setName(name)
-                    .setUrl(tag)
+                    .setTag(tag)
                     .assertValid()
                     .setCreateDate(new Date())
                     .setUpdateDate(new Date())
