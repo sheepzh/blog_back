@@ -27,6 +27,7 @@ public class Comment extends BaseEntity {
     private String email;
     private Integer targetType;
     private String targetUrl;
+    private String ipAddress;
 
 
     @Override
@@ -93,8 +94,27 @@ public class Comment extends BaseEntity {
         this.email = email;
         return this;
     }
-
-    @Override
+	
+	public Comment setTargetId(Integer targetId) {
+		this.targetId = targetId;
+		return this;
+	}
+	
+	public Comment setTargetType(Integer targetType) {
+		this.targetType = targetType;
+		return this;
+	}
+	
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	
+	public Comment setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+		return this;
+	}
+	
+	@Override
     public BaseEntity assertValid() {
         if (StringUtil.existsBlank(user, content) || ObjectUtil.existsNull(targetId))
             throw new BlogException("Invalid Comment");

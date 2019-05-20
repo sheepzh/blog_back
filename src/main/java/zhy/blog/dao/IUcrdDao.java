@@ -19,7 +19,7 @@ public interface IUcrdDao<T> {
 
     int deleteBy(T condition);
 
-    int count(T article);
+    int count(T condition);
 
     int insertNormal(T toInsert);
 
