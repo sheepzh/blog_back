@@ -1,27 +1,30 @@
 package zhy.blog.dao;
 
 import zhy.blog.util.Page;
+import zhy.util.leveldb.query.Condition;
 
 import java.util.List;
 
 public interface IUcrdDao<T> {
-    T get(int id);
-
-    List<T> find(T condition);
-
-    List<T> find(T condition, Page page);
-
-    int insert(T toInsert);
-
-    int update(T toUpdate);
-
-    int delete(int id);
-
-    int deleteBy(T condition);
-
-    int count(T condition);
-
-    int insertNormal(T toInsert);
-
-    int insertInitialized(T toInsert);
+	T get(int id);
+	
+	List<T> find(T condition);
+	
+	List<T> find(T condition, Page page);
+	
+	int insert(T toInsert);
+	
+	int update(T toUpdate);
+	
+	int delete(int id);
+	
+	int deleteBy(T condition);
+	
+	int count(T condition);
+	
+	int insertNormal(T toInsert);
+	
+	int insertInitialized(T toInsert);
+	
+	void setAdditionalCondition(List<Condition> conditions);
 }

@@ -125,7 +125,7 @@ abstract class BaseDao<T extends BaseEntity> implements IUcrdDao<T>, Initializab
 	 *
 	 * @param conditionList conditions;
 	 */
-	void setAdditionalCondition(List<Condition> conditionList) {
+	public void setAdditionalCondition(List<Condition> conditionList) {
 		synchronized (mutex) {
 			this.additionalCondition.addAll(conditionList);
 		}
