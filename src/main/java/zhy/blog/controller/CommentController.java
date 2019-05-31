@@ -7,10 +7,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import zhy.blog.dao.ICommentDao;
 import zhy.blog.entity.Comment;
+import zhy.util.leveldb.query.Condition;
+import zhy.util.leveldb.query.Operation;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
+import java.util.Collections;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -31,15 +36,26 @@ public class CommentController extends BaseController {
 					  @RequestParam(defaultValue = "") String url, HttpServletRequest request) {
 		return exceptionWrap(() -> {
 			Comment comment = new Comment()
-								.setContent(content)
-								.setUser(user)
-								.setTargetId(targetId)
-								.setTargetType(Comment.COMMENT)
-								.setEmail(email)
-								.setTargetUrl(url)
-								.setIpAddress(request.getRemoteHost());
+								  .setContent(content)
+								  .setUser(user)
+								  .setTargetId(targetId)
+								  .setTargetType(Comment.COMMENT)
+								  .setEmail(email)
+								  .setTargetUrl(url)
+								  .setIpAddress(request.getRemoteHost());
 			comment.assertValid();
 			return commentDao.insertNormal(comment);
+		});
+	}
+	
+	@RequestMapping(value = "/comment/latest", method = GET)
+	public Object latest() {
+		return exceptionWrap(() -> {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DATE, -10);
+			Condition condition = new Condition("createDate", calendar.getTimeInMillis() + "", Operation.NUMBER_GREATER);
+			commentDao.setAdditionalCondition(Collections.singletonList(condition));
+			return commentDao.findAll(null);
 		});
 	}
 	
