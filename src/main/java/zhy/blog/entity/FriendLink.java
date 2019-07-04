@@ -15,6 +15,7 @@ public class FriendLink extends BaseEntity {
     private String info;
     private String tag;
     private String location;
+    private int stage ;
 
 
     public String getUrl() {
@@ -68,4 +69,22 @@ public class FriendLink extends BaseEntity {
             throw new BlogException("Invalid FriendLink");
         return this;
     }
+	
+	public String getLocation() {
+		return location;
+	}
+	
+	public FriendLink setLocation(String location) {
+		this.location = location;
+		return this;
+	}
+	
+	public int getStage() {
+		return stage;
+	}
+	
+	public FriendLink setStage(int stage) {
+		this.stage = stage;
+		return this;
+	}
 }
