@@ -9,6 +9,8 @@ import zhy.blog.entity.RequestInfo;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static zhy.blog.util.StringUtil.isBlank;
+
 public class UrlInterceptor implements HandlerInterceptor {
 	
 	private IRequestInfoDao requestInfoDao = new AppConfig().requestInfoDao();
@@ -19,11 +21,24 @@ public class UrlInterceptor implements HandlerInterceptor {
 	}
 	
 	private void visitCount(HttpServletRequest request) {
-		String ip = request.getRemoteHost();
-		String url = request.getRequestURI();
+		
+		String ip = request.getHeader("x-forwarded-for");
+		if (isBlank(ip) || ip.equalsIgnoreCase("unknown"))
+			ip = request.getHeader("Proxy-Client-IP");
+		if (isBlank(ip) || ip.equalsIgnoreCase("unknown"))
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		if (isBlank(ip) || ip.equalsIgnoreCase("unknown"))
+			ip = request.getHeader("HTTP_CLIENT_IP");
+		if (isBlank(ip) || ip.equalsIgnoreCase("unknown"))
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		if (isBlank(ip) || ip.equalsIgnoreCase("unknown"))
+			ip = request.getRemoteAddr();
+		String param = request.getQueryString();
+		param = isBlank(param) ? param : ("?" + param);
+		String url = request.getServletPath() + param;
 		RequestInfo requestInfo = new RequestInfo()
-									.setUrl(url)
-									.setIp(ip);
+									  .setUrl(url)
+									  .setIp(ip);
 		try {
 			requestInfoDao.insertNormal(requestInfo);
 		} catch (Exception ignored) {
